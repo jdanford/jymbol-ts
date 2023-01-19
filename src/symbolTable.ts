@@ -9,7 +9,7 @@ export class SymbolTable {
         this.indices = new Map();
 
         const staticSymbolStrings = ["nil", "cons", "fn", "native-fn"] as const;
-        for (let string of staticSymbolStrings) {
+        for (const string of staticSymbolStrings) {
             const symbol = Symbol[string];
             this.set(string, symbol.index);
         }

@@ -18,7 +18,10 @@ export function sized<T, N extends number>(values: T[], expectedLength: N): Size
     return values as SizedArray<T, N>;
 }
 
-export function hasLength<T, N extends number>(array: T[], expectedLength: N): array is SizedArray<T, N> {
+export function hasLength<T, N extends number>(
+    array: T[],
+    expectedLength: N,
+): array is SizedArray<T, N> {
     return array.length === expectedLength;
 }
 

@@ -79,7 +79,7 @@ export class VM {
     private evalList(list: Value, env: Env): [Value[], Env] {
         const values: Value[] = [];
         const tailValues = this.heap.loadList(list);
-        for (let rawValue of tailValues) {
+        for (const rawValue of tailValues) {
             const [value, newEnv] = this.eval(rawValue, env);
             values.push(value);
             env = newEnv;
@@ -106,7 +106,7 @@ export class VM {
         throw new Error(`Can't apply \`${ref}\``);
     }
 
-    applyFn(paramList: Value, fnBody: Value, tail: Value, env: Env): [Value, Env] {
+    private applyFn(paramList: Value, fnBody: Value, tail: Value, env: Env): [Value, Env] {
         const params = this.heap.loadList(paramList);
         const [args, newEnv] = this.evalList(tail, env);
         env = newEnv;
@@ -127,7 +127,7 @@ export class VM {
 
     private applyNative(fn: NativeFunction, tail: Value, env: Env): [Value, Env] {
         const values = this.heap.loadList(tail);
-        const context = { env, vm: this};
+        const context = { env, vm: this };
         return fn.apply(values, context);
     }
 
@@ -158,11 +158,7 @@ export class VM {
         return this.renderCompound(values);
     }
 
-    private renderCompound(
-        values: Value[],
-        openingBrace: string = "(",
-        closingBrace: string = ")",
-    ): string {
+    private renderCompound(values: Value[], openingBrace = "(", closingBrace = ")"): string {
         const stringValues = values.map((value) => this.render(value));
         const body = stringValues.join(" ");
         return openingBrace + body + closingBrace;

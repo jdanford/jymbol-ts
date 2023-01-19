@@ -73,7 +73,7 @@ export class Heap {
 
     loadList(list: Value): Value[] {
         let ref = tryAsRef(list);
-        let values: Value[] = [];
+        const values: Value[] = [];
 
         while (true) {
             const [head, tail] = this.loadConsRef(ref);

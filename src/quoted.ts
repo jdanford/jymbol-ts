@@ -10,7 +10,7 @@ export const quoteTypes = {
 } as const;
 
 export type QuoteKey = keyof typeof quoteTypes;
-export type QuoteType = typeof quoteTypes[QuoteKey];
+export type QuoteType = (typeof quoteTypes)[QuoteKey];
 
 export class Quoted<T extends Value> implements ObjectValue {
     readonly quote: QuoteType;

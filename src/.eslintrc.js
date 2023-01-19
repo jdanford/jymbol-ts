@@ -1,9 +1,17 @@
 module.exports = {
     parser: "@typescript-eslint/parser",
-    extends: ["plugin:@typescript-eslint/recommended", "react-app", "plugin:prettier/recommended"],
-    plugins: ["@typescript-eslint", "react", "simple-import-sort"],
+    extends: ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+    plugins: ["@typescript-eslint", "simple-import-sort"],
     rules: {
         "@typescript-eslint/no-explicit-any": "error",
-        "simple-import-sort/sort": "warn",
+        "@typescript-eslint/ban-types": [
+            "error",
+            {
+                types: {
+                    Symbol: false,
+                },
+                extendDefaults: true,
+            },
+        ],
     },
 };

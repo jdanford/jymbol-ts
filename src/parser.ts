@@ -2,8 +2,8 @@
 
 import { SyntaxError } from "./error";
 import { Quoted, QuoteKey, quoteTypes } from "./quoted";
-import { VM } from "./vm";
 import { Atom, Value } from "./value";
+import { VM } from "./vm";
 
 const whitespace = /\s/;
 const nonSymbol = /\s|\\|"|'|`|,|\(|\)/;
@@ -29,15 +29,15 @@ export class Parser {
 
     static parse(vm: VM, input: string): Value {
         const parser = new Parser(vm, input);
-        const value = parser.expr();
+        const value = parser.value();
 
         if (value === undefined) {
-            throw parser.syntaxError("Can't parse empty expression");
+            throw parser.syntaxError("Can't parse empty valueession");
         }
 
         const extraChars = parser.peek();
         if (extraChars) {
-            throw parser.syntaxError(`Unrecognized characters after expression: \`${extraChars}\``);
+            throw parser.syntaxError(`Unrecognized characters: \`${extraChars}\``);
         }
 
         return value;
@@ -54,7 +54,7 @@ export class Parser {
     }
 
     peek(): string {
-        if (this.input.length == this.pos) {
+        if (this.input.length === this.pos) {
             return "";
         }
 
@@ -62,21 +62,21 @@ export class Parser {
     }
 
     consume(): string {
-        if (this.input.length == this.pos) {
+        if (this.input.length === this.pos) {
             return "";
         }
 
         let c = this.input[this.pos];
         this.pos += 1;
 
-        if (c == "\r") {
-            if (this.peek() == "\n") {
+        if (c === "\r") {
+            if (this.peek() === "\n") {
                 this.pos += 1;
                 c += "\n";
             }
             this.line += 1;
             this.col = 0;
-        } else if (c == "\n") {
+        } else if (c === "\n") {
             this.line += 1;
             this.col = 0;
         } else {
@@ -97,31 +97,28 @@ export class Parser {
     }
 
     readWhileMatches(regex: RegExp): string {
-        return this.readWhile(c => regex.test(c));
+        return this.readWhile((c) => regex.test(c));
     }
 
     readWhileNotMatches(regex: RegExp): string {
-        return this.readWhile(c => !regex.test(c));
+        return this.readWhile((c) => !regex.test(c));
     }
 
     skipWhitespace(): void {
         this.readWhileMatches(whitespace);
     }
 
-    expr(): Value | undefined {
+    value(): Value | undefined {
         this.skipWhitespace();
-
         const next = this.peek();
 
         if (quote.test(next)) {
             return this.quoted();
         }
 
-        let expr = next == "(" ? this.list() : this.atom();
-
+        const value = next === "(" ? this.list() : this.atom();
         this.skipWhitespace();
-
-        return expr;
+        return value;
     }
 
     atom(): Atom | undefined {
@@ -141,7 +138,7 @@ export class Parser {
             string += this.readWhileNotMatches(nonSymbol);
             next = this.peek();
 
-            if (next == "\\") {
+            if (next === "\\") {
                 this.consume();
                 string += this.consume();
                 continue;
@@ -161,39 +158,39 @@ export class Parser {
 
     string(): string {
         // consume "
-        let delimiter = this.consume();
+        const delimiter = this.consume();
         let string = "";
 
         while (true) {
             string += this.readWhileNotMatches(stringOrEscaped);
             let next = this.peek();
 
-            if (next == "") {
+            if (next === "") {
                 this.fail(`Unterminated string literal: \`${string}\``);
             }
 
-            if (next == delimiter) {
+            if (next === delimiter) {
                 this.consume();
                 break;
             }
 
-            if (next == "\\") {
+            if (next === "\\") {
                 this.consume();
                 next = this.peek();
 
-                if (next == "r") {
+                if (next === "r") {
                     this.consume();
                     string += "\r";
-                } else if (next == "t") {
+                } else if (next === "t") {
                     this.consume();
                     string += "\t";
-                } else if (next == "n") {
+                } else if (next === "n") {
                     this.consume();
                     string += "\n";
-                } else if (next == "f") {
+                } else if (next === "f") {
                     this.consume();
                     string += "\f";
-                } else if (next == "b") {
+                } else if (next === "b") {
                     this.consume();
                     string += "\b";
                 } else {
@@ -215,16 +212,16 @@ export class Parser {
 
         const next = this.peek();
 
-        if (quoteType == "unquote" && next == "@") {
+        if (quoteType === "unquote" && next === "@") {
             this.consume();
             quoteType = "unquote-splicing";
             quoteChar = ",@";
         }
 
         this.skipWhitespace();
-        let quotedValue = this.expr();
+        const quotedValue = this.value();
         if (quotedValue === undefined) {
-            this.fail(`Expected expression after \`${quoteChar}\``);
+            this.fail(`Expected value after \`${quoteChar}\``);
         }
 
         return new Quoted<Value>(quoteType, quotedValue);
@@ -232,25 +229,25 @@ export class Parser {
 
     list(): Value {
         let next = this.peek();
-        if (next != "(") {
+        if (next !== "(") {
             this.fail(`Expected \`(\`, got \`${next}\``);
         }
 
         this.consume();
 
-        let values: Value[] = [];
-        let value = this.expr();
+        const values: Value[] = [];
+        let value = this.value();
 
         if (value !== undefined) {
             values.push(value);
 
-            while ((value = this.expr()) !== undefined) {
+            while ((value = this.value()) !== undefined) {
                 values.push(value);
             }
         }
 
         next = this.peek();
-        if (next != ")") {
+        if (next !== ")") {
             this.fail(`Expected \`)\`, got ${next}`);
         }
 

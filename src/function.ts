@@ -9,7 +9,10 @@ export interface NativeFunctionContext {
     readonly env: Env;
 }
 
-export type RawNativeFunction = (values: Value[], context: NativeFunctionContext) => Value | [Value, Env];
+export type RawNativeFunction = (
+    values: Value[],
+    context: NativeFunctionContext,
+) => Value | [Value, Env];
 
 export interface NativeFunctionParams {
     readonly arity?: number | undefined;

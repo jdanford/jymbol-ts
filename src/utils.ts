@@ -5,7 +5,7 @@ import { isNativeFunction, isNumber, isRef, isString, isSymbol, Value } from "./
 
 export function checkType(type: Symbol, expectedType: Symbol) {
     if (type !== expectedType) {
-        throw new Error(`Expected type \`${expectedType}\`, got \`${type}\``)
+        throw new Error(`Expected type \`${expectedType}\`, got \`${type}\``);
     }
 }
 
