@@ -32,7 +32,7 @@ export class Parser {
         const value = parser.value();
 
         if (value === undefined) {
-            throw parser.syntaxError("Can't parse empty valueession");
+            throw parser.syntaxError("Can't parse empty expression");
         }
 
         const extraChars = parser.peek();
