@@ -7,7 +7,7 @@ import { VM } from "./vm";
 
 const whitespace = /\s/;
 const nonSymbol = /\s|\\|"|'|`|,|\(|\)/;
-const stringOrEscaped = /^(\\|"|$)/;
+const stringOrEscaped = /\\|"/;
 const digit = /[0-9]/;
 const stringDelimiter = /["]/;
 const quote = /['`,]/;
@@ -72,7 +72,7 @@ export class Parser {
         if (c === "\r") {
             if (this.peek() === "\n") {
                 this.pos += 1;
-                c += "\n";
+                c = "\n";
             }
             this.line += 1;
             this.col = 0;
@@ -206,7 +206,7 @@ export class Parser {
         return string;
     }
 
-    quoted(): Quoted<Value> {
+    quoted(): Quoted {
         let quoteChar = this.consume() as QuoteKey;
         let quoteType = quoteTypes[quoteChar];
 
@@ -224,7 +224,7 @@ export class Parser {
             this.fail(`Expected value after \`${quoteChar}\``);
         }
 
-        return new Quoted<Value>(quoteType, quotedValue);
+        return new Quoted(quoteType, quotedValue);
     }
 
     list(): Value {
@@ -236,14 +236,14 @@ export class Parser {
         this.consume();
 
         const values: Value[] = [];
-        let value = this.value();
 
-        if (value !== undefined) {
-            values.push(value);
-
-            while ((value = this.value()) !== undefined) {
-                values.push(value);
+        while (true) {
+            const value = this.value();
+            if (value === undefined) {
+                break;
             }
+
+            values.push(value);
         }
 
         next = this.peek();

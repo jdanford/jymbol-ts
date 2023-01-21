@@ -56,9 +56,9 @@ export class VM {
         return [value, env];
     }
 
-    private evalQuote(quoted: Quoted<Value>, env: Env): [Value, Env] {
+    private evalQuote(quoted: Quoted, env: Env): [Value, Env] {
         if (quoted.quote === "quote") {
-            return [quoted.inner, env];
+            return [quoted.value, env];
         }
 
         // TODO: handle other quote types

@@ -4,7 +4,7 @@ import { Quoted } from "./quoted";
 import { NativeFunction } from "./function";
 
 export type Atom = number | string | Symbol;
-export type Value = Atom | Quoted<Value> | Ref | NativeFunction;
+export type Value = Atom | Quoted | Ref | NativeFunction;
 
 export function isAtom(value: Value): value is Atom {
     return isNumber(value) || isString(value) || isSymbol(value);
@@ -22,7 +22,7 @@ export function isSymbol(value: Value): value is Symbol {
     return value instanceof Symbol;
 }
 
-export function isQuoted(value: Value): value is Quoted<Value> {
+export function isQuoted(value: Value): value is Quoted {
     return value instanceof Quoted;
 }
 

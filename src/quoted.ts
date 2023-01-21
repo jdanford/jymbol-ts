@@ -12,16 +12,16 @@ export const quoteTypes = {
 export type QuoteKey = keyof typeof quoteTypes;
 export type QuoteType = (typeof quoteTypes)[QuoteKey];
 
-export class Quoted<T extends Value> implements ObjectValue {
+export class Quoted implements ObjectValue {
     readonly quote: QuoteType;
-    readonly inner: T;
+    readonly value: Value;
 
-    constructor(quote: QuoteType, inner: T) {
+    constructor(quote: QuoteType, value: Value) {
         this.quote = quote;
-        this.inner = inner;
+        this.value = value;
     }
 
     hashCode(): number {
-        return hash("quoted", this.quote, this.inner);
+        return hash("quoted", this.quote, this.value);
     }
 }
